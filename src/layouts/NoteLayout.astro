@@ -1,0 +1,171 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import MermaidRenderer from '../components/MermaidRenderer.astro';
+import { siteConfig } from '../data/siteConfig';
+
+interface Props {
+  title: string;
+  description: string;
+  publishedAt: Date;
+  updatedAt?: Date;
+  tags?: string[];
+  readingTime?: string;
+}
+
+const {
+  title,
+  description,
+  publishedAt,
+  updatedAt,
+  tags = [],
+  readingTime = '3 min read',
+} = Astro.props;
+
+const twitterUrl = siteConfig.socials.find((s) => s.name.toLowerCase().includes('twitter') || s.name.toLowerCase().includes('x'))?.url || 'https://x.com';
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(publishedAt);
+
+const formattedUpdated = updatedAt
+  ? new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(updatedAt)
+  : null;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  articleDate={publishedAt.toISOString()}
+>
+  <div class="note-container">
+    <nav class="back-nav">
+      <a href="/notes" class="back-link font-mono">← all notes</a>
+    </nav>
+
+    <header class="note-header">
+      <h1 class="note-title">{title}</h1>
+
+      <div class="note-meta font-mono">
+        <time datetime={publishedAt.toISOString()}>{formattedDate}</time>
+        <span class="meta-dot">•</span>
+        <span>{readingTime}</span>
+        {
+          formattedUpdated && (
+            <>
+              <span class="meta-dot">•</span>
+              <span class="text-faint">updated {formattedUpdated}</span>
+            </>
+          )
+        }
+      </div>
+
+      {
+        tags.length > 0 && (
+          <div class="note-tags">
+            {tags.map((tag) => (
+              <span class="tag-pill font-mono">#{tag}</span>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <article class="prose">
+      <slot />
+    </article>
+
+    <MermaidRenderer />
+
+    <div class="note-footer">
+      <div class="note-footer-content">
+        <p class="text-muted text-sm">
+          Have thoughts, corrections, or a different perspective? Feel free to{' '}
+          <a href="/contact" class="text-link">reach out</a> or discuss on{' '}
+          <a
+            href={twitterUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-link"
+          >
+            x/twitter
+          </a>.
+        </p>
+        <a href="/notes" class="back-link font-mono">← back to notes</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .note-container {
+    max-width: var(--max-width);
+    margin: 0;
+  }
+
+  .back-nav {
+    margin-bottom: var(--space-6);
+  }
+
+  .back-link {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .note-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .note-title {
+    font-size: var(--text-3xl);
+    line-height: 1.2;
+    margin-bottom: var(--space-3);
+  }
+
+  .note-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+
+  .meta-dot {
+    color: var(--border);
+  }
+
+  .note-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .tag-pill {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .note-footer {
+    margin-top: var(--space-12);
+  }
+
+  .note-footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+</style>

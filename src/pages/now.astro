@@ -1,0 +1,61 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { siteConfig } from '../data/siteConfig';
+
+const { now, author } = siteConfig;
+---
+
+<PageLayout
+  title="Now"
+  description={`What ${author.name} is currently working on, reading, and exploring.`}
+  subtitle={`A public log of current interests and projects. Last updated ${now.lastUpdated}.`}
+>
+  <div class="prose">
+    <h2>Building & Tinkering</h2>
+    <ul>
+      {
+        now.building.map((item) => (
+          <li>
+            <strong>{item.title}</strong>: <span set:html={item.description} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>Reading & Studying</h2>
+    <ul>
+      {
+        now.reading.map((item) => (
+          <li>
+            <strong>{item.title}</strong>: <span set:html={item.description} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>Thinking About</h2>
+    <ul>
+      {
+        now.thinking.map((item) => (
+          <li>
+            <strong>{item.title}</strong>: <span set:html={item.description} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <hr />
+
+    <p class="text-sm text-muted">
+      If any of these topics intersect with what you're working on, feel free to{' '}
+      <a href="/contact" class="text-link">reach out <span class="arrow">↗</span></a>.
+    </p>
+  </div>
+</PageLayout>
+
+<style>
+  .inspired-by {
+    margin-top: 0;
+    margin-bottom: var(--space-6);
+  }
+</style>

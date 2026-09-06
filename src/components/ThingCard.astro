@@ -1,0 +1,145 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  year?: string | number;
+  status: 'stable' | 'experiment' | 'wip' | 'scrapped';
+  statusLabel?: string;
+  tags?: string[];
+  url?: string;
+  repo?: string;
+}
+
+const {
+  title,
+  description,
+  status,
+  tags = [],
+  url,
+  repo,
+} = Astro.props;
+---
+
+<article class="thing-row">
+  <div class="thing-aside">
+    <h3 class="thing-title">
+      {
+        url ? (
+          <a href={url} target="_blank" rel="noopener noreferrer" class="thing-link">
+            {title}
+          </a>
+        ) : (
+          title
+        )
+      }
+    </h3>
+    <div class="thing-aside-links font-mono">
+      {repo && (
+        <a href={repo} target="_blank" rel="noopener noreferrer" class="meta-link">
+          code ↗
+        </a>
+      )}
+      {url && (
+        <a href={url} target="_blank" rel="noopener noreferrer" class="meta-link">
+          view ↗
+        </a>
+      )}
+      {status === 'scrapped' && (
+        <span class="status-note text-faint">[scrapped]</span>
+      )}
+    </div>
+  </div>
+
+  <div class="thing-content">
+    <p class="thing-desc">{description}</p>
+    {tags.length > 0 && (
+      <p class="thing-tech text-muted font-mono">
+        Technologies: {tags.join(', ')}
+      </p>
+    )}
+  </div>
+</article>
+
+<style>
+  .thing-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    align-items: baseline;
+  }
+
+  .thing-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .thing-title {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  .thing-link {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .thing-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .thing-aside-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: var(--text-xs);
+  }
+
+  .meta-link {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--border);
+  }
+
+  .meta-link:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .status-note {
+    font-size: var(--text-xs);
+  }
+
+  .thing-content {
+    line-height: var(--leading-relaxed);
+  }
+
+  .thing-desc {
+    font-size: var(--text-sm);
+    color: var(--text);
+    margin-bottom: var(--space-2);
+  }
+
+  .thing-tech {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .thing-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+    }
+
+    .thing-aside-links {
+      flex-direction: row;
+      gap: var(--space-3);
+    }
+  }
+</style>

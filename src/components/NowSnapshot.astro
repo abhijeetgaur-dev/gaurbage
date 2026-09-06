@@ -1,0 +1,111 @@
+---
+import { siteConfig, type NowItem } from '../data/siteConfig';
+
+interface Props {
+  status?: string;
+  items?: NowItem[];
+}
+
+const {
+  items = siteConfig.now.items,
+} = Astro.props;
+---
+
+<div class="now-snapshot">
+  <div class="now-header">
+    <div class="now-indicator-group">
+      <span class="live-dot"></span>
+      <span class="now-label font-mono">now</span>
+    </div>
+    <a href="/now" class="now-more font-mono">log ↗</a>
+  </div>
+
+  <ul class="now-list">
+    {
+      items.map((item) => (
+        <li class="now-item">
+          <span class="item-tag font-mono">{item.label}</span>
+          <span class="item-text">{item.text}</span>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .now-snapshot {
+    margin: var(--space-6) 0 var(--space-8);
+  }
+
+  .now-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .now-indicator-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    display: inline-block;
+  }
+
+  .now-label {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .now-more {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .now-more:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .now-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .now-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .item-tag {
+    font-size: var(--text-xs);
+    color: var(--text-faint);
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    color: var(--text-muted);
+    line-height: var(--leading-normal);
+  }
+
+  @media (max-width: 480px) {
+    .now-item {
+      flex-direction: column;
+      gap: 1px;
+    }
+  }
+</style>

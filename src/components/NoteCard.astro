@@ -1,0 +1,81 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  slug: string;
+  publishedAt: Date;
+  tags?: string[];
+}
+
+const { title, description, slug, publishedAt } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+}).format(publishedAt);
+
+const isoDate = publishedAt.toISOString().split('T')[0];
+---
+
+<article class="note-row">
+  <div class="note-main">
+    <a href={`/notes/${slug}`} class="note-title">
+      {title}
+    </a>
+    <span class="note-desc">{description}</span>
+  </div>
+  <time datetime={isoDate} class="note-date font-mono">{formattedDate}</time>
+</article>
+
+<style>
+  .note-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: 0.55rem 0;
+  }
+
+  .note-main {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    line-height: var(--leading-normal);
+  }
+
+  .note-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .note-title:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .note-desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .note-date {
+    font-size: var(--text-xs);
+    color: var(--text-faint);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .note-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 0.65rem 0;
+    }
+  }
+</style>

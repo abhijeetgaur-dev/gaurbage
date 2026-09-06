@@ -1,0 +1,163 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { siteConfig } from '../data/siteConfig';
+
+const { author, socials } = siteConfig;
+const email = author.email;
+---
+
+<PageLayout
+  title="Contact"
+  description={`Get in touch with ${author.name} for conversations on backend systems, infrastructure, collaboration, or engineering.`}
+>
+  <div class="prose contact-prose">
+    <h2>Collaboration & Work</h2>
+    <p>
+      I’m particularly drawn to projects that involve:
+    </p>
+    <ul>
+      <li>Designing and scaling backend systems and distributed services</li>
+      <li>Infrastructure reliability, CI/CD pipelines, and cloud platform tooling</li>
+      <li>Pragmatic AI system integration and developer infrastructure</li>
+    </ul>
+
+    <h2>Get in Touch</h2>
+    <div class="contact-list">
+      <div class="contact-item">
+        <div class="contact-main">
+          <a href={`mailto:${email}`} class="contact-title font-mono">
+            Email
+            <span class="arrow">↗</span>
+          </a>
+          <span class="contact-handle font-mono text-muted">{email}</span>
+          <button
+            id="copy-email-btn"
+            class="copy-btn font-mono"
+            type="button"
+            data-email={email}
+            aria-label="Copy email address"
+          >
+            copy
+          </button>
+        </div>
+        <p class="contact-desc text-muted">Best way to reach me directly</p>
+      </div>
+
+      {
+        socials.map((social) => (
+          <div class="contact-item">
+            <div class="contact-main">
+              <a
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contact-title font-mono"
+              >
+                {social.name}
+                <span class="arrow">↗</span>
+              </a>
+              <span class="contact-handle font-mono text-muted">{social.handle}</span>
+            </div>
+            <p class="contact-desc text-muted">{social.description}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="text-sm text-muted">
+      I typically reply within 24 to 48 hours.
+    </p>
+  </div>
+</PageLayout>
+
+<style>
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin: var(--space-4) 0 var(--space-8);
+  }
+
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .contact-main {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .contact-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--border);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+  }
+
+  .contact-title:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+
+  .arrow {
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+
+  .contact-handle {
+    font-size: var(--text-xs);
+  }
+
+  .contact-desc {
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .copy-btn {
+    font-size: var(--text-xs);
+    padding: 1px 7px;
+    background-color: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .copy-btn:hover {
+    color: var(--text);
+    border-color: var(--text-faint);
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const copyBtn = document.getElementById('copy-email-btn');
+    if (!copyBtn) return;
+
+    copyBtn.addEventListener('click', async () => {
+      const email = copyBtn.getAttribute('data-email');
+      if (!email) return;
+
+      try {
+        await navigator.clipboard.writeText(email);
+        copyBtn.innerText = 'copied!';
+        setTimeout(() => {
+          copyBtn.innerText = 'copy';
+        }, 2000);
+      } catch (err) {
+        copyBtn.innerText = 'failed';
+      }
+    });
+  })();
+</script>

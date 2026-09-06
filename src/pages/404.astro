@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404 — Object Not Found"
+  description="404: The requested address was swept by the garbage collector."
+>
+  <div class="not-found-container">
+    <div class="terminal-box">
+      <div class="terminal-header">
+        <span class="term-dot dot-red"></span>
+        <span class="term-dot dot-yellow"></span>
+        <span class="term-dot dot-green"></span>
+        <span class="term-title font-mono">runtime_error.log</span>
+      </div>
+      <div class="terminal-body font-mono">
+        <p class="term-line error-line">
+          <span class="prompt">></span> PANIC: SIGSEGV: segmentation violation
+        </p>
+        <p class="term-line">
+          <span class="prompt">></span> Dereferencing pointer at 0x00000404...
+        </p>
+        <p class="term-line text-muted">
+          <span class="prompt">></span> Object not found in heap.
+        </p>
+        <p class="term-line text-muted">
+          <span class="prompt">></span> Status: Swept and collected by GC.
+        </p>
+      </div>
+    </div>
+
+    <div class="not-found-action">
+      <h1 class="font-mono">404 — Page Missing</h1>
+      <p class="text-muted">
+        The page you are looking for might have been moved, renamed, or safely
+        deallocated.
+      </p>
+      <a href="/" class="home-btn font-mono">
+        ← return to allocated memory (/)
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found-container {
+    max-width: 620px;
+    margin: var(--space-8) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .terminal-box {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-surface);
+    overflow: hidden;
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--bg-subtle);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .term-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-red {
+    background-color: #ef4444;
+  }
+
+  .dot-yellow {
+    background-color: #f59e0b;
+  }
+
+  .dot-green {
+    background-color: #10b981;
+  }
+
+  .term-title {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-left: var(--space-2);
+  }
+
+  .terminal-body {
+    padding: var(--space-4);
+    font-size: var(--text-xs);
+    line-height: 1.8;
+  }
+
+  .term-line {
+    margin: 0;
+  }
+
+  .error-line {
+    color: var(--status-scrapped);
+    font-weight: 600;
+  }
+
+  .prompt {
+    color: var(--text-faint);
+    margin-right: var(--space-1);
+  }
+
+  .not-found-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .not-found-action h1 {
+    font-size: var(--text-xl);
+  }
+
+  .home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .home-btn:hover {
+    background-color: var(--accent-subtle);
+    border-color: var(--accent);
+  }
+</style>

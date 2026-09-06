@@ -1,0 +1,62 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import { getCollection } from 'astro:content';
+
+const allNotes = await getCollection('notes', ({ data }) => !data.draft);
+const sortedNotes = allNotes.sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+);
+---
+
+<PageLayout
+  title="Notes"
+  description="Technical and personal notes on backend systems, performance, infrastructure, and engineering mental models by Abhijeet Gaur."
+  subtitle="Accumulated thinking, field notes, and things I am trying to understand. Not a content blog."
+>
+  <div class="notes-meta-bar font-mono text-xs">
+    <span class="text-faint">{sortedNotes.length} entries</span>
+    <a href="/rss.xml" class="rss-link text-muted" title="Subscribe via RSS">
+      rss feed ↗
+    </a>
+  </div>
+
+  <div class="notes-list">
+    {
+      sortedNotes.map((note) => (
+        <NoteCard
+          title={note.data.title}
+          description={note.data.description}
+          slug={note.slug || note.id}
+          publishedAt={note.data.publishedAt}
+          tags={note.data.tags}
+        />
+      ))
+    }
+  </div>
+</PageLayout>
+
+<style>
+  .notes-meta-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+  }
+
+  .rss-link {
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .rss-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+</style>

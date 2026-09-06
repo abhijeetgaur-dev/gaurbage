@@ -1,0 +1,78 @@
+---
+import { siteConfig } from '../data/siteConfig';
+
+const currentYear = new Date().getFullYear();
+const { author, socials } = siteConfig;
+---
+
+<footer class="site-footer">
+  <div class="site-container footer-inner">
+    <div class="footer-links">
+      <a href="/rss.xml" class="footer-link font-mono" title="RSS Feed">rss</a>
+      {
+        socials.map((social) => (
+          <a
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link font-mono"
+          >
+            {social.name.toLowerCase()}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-12);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+
+  .colophon-title {
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: var(--space-1);
+  }
+
+  .colophon-meta {
+    font-size: var(--text-xs);
+    margin-bottom: 0;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-size: var(--text-xs);
+  }
+
+  .footer-link {
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .footer-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 580px) {
+    .footer-inner {
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+  }
+</style>

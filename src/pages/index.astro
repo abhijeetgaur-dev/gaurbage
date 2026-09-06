@@ -1,0 +1,291 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NowSnapshot from '../components/NowSnapshot.astro';
+import NoteCard from '../components/NoteCard.astro';
+// import ThingCard from '../components/ThingCard.astro';
+import { getCollection } from 'astro:content';
+import { siteConfig } from '../data/siteConfig';
+
+const { author } = siteConfig;
+
+// Fetch notes sorted by publishedAt desc
+const allNotes = await getCollection('notes', ({ data }) => !data.draft);
+const recentNotes = allNotes
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 4);
+
+// Fetch featured things
+const allThings = await getCollection('things');
+const featuredThings = allThings
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+
+<BaseLayout wide={true}>
+  <!-- Introduction & About -->
+  <section class="intro-section">
+    <div class="intro-layout">
+      <div class="intro-content">
+        <h1 class="intro-title">{author.name}</h1>
+        <p class="intro-lead">
+          {author.lead}
+        </p>
+
+        <div class="intro-body">
+          <p class="intro-text text-muted">
+            Hey there, and welcome to <em>Gaurbage.com</em>. Yes, it's a pun — Gaur + garbage.
+            (Groan, I know. Now you know exactly the kind of humor you're dealing with.)
+          </p>
+
+          <p class="intro-text text-muted">
+            I'm a <strong>Software Development Engineer</strong> currently at <a href="https://4waytechnologies.com/" target="_blank" rel="noopener noreferrer" class="text-link"><strong>4way Technologies</strong><span class="arrow">↗</span></a>,
+            previously at <a href="https://volksenergie.in/" target="_blank" rel="noopener noreferrer" class="text-link"><strong>Volks Energie</strong><span class="arrow">↗</span></a>, and I interned at <a href="https://www.absite.in/" target="_blank" rel="noopener noreferrer" class="text-link"><strong>ABS Technologies</strong><span class="arrow">↗</span></a> before that.
+          </p>
+
+          <p class="intro-text text-muted">
+            I'm a <strong>backend-first engineer</strong>, with <strong>DevOps</strong> as my other core obsession. These days I'm deep in <strong>infra</strong> work —
+            building <strong>CI/CD pipelines</strong>, setting up <strong>monorepos</strong>, and optimizing whatever code crosses my path, whether that's
+            an unoptimized <code>useApi</code> hook in React or a tangled RBAC pipeline in Nest or Express. My team and I care
+            about <strong>writing better code</strong>, frontend or backend, doesn't matter.
+          </p>
+
+          <p class="intro-text text-muted">
+            I love going into the nooks and crannies of how things actually work — pulling things apart until I really get them.
+          </p>
+
+          <p class="intro-text text-muted">
+            This site is basically a window into what I'm up to. Feel free to <a href="/contact" class="text-link">connect</a> if you want to talk shop, collaborate, or just nerd out about infra.
+          </p>
+        </div>
+      </div>
+
+      <div class="intro-media">
+        <img
+          src={author.avatar || '/avatar.jpg'}
+          alt={author.name}
+          class="intro-avatar"
+          width="280"
+          height="350"
+          loading="eager"
+          onerror="this.onerror=null;this.src='/avatar.svg';"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Now Widget -->
+  <NowSnapshot />
+
+  <!-- Recent Notes Section -->
+  <section class="home-section">
+    <div class="section-header">
+      <h2 class="section-title">Recent Notes</h2>
+      <a href="/notes" class="section-link font-mono">all notes ({allNotes.length}) ↗</a>
+    </div>
+    <div class="notes-list">
+      {
+        recentNotes.map((note) => (
+          <NoteCard
+            title={note.data.title}
+            description={note.data.description}
+            slug={note.slug || note.id}
+            publishedAt={note.data.publishedAt}
+            tags={note.data.tags}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Selected Things Section (hidden for now) -->
+  <!--
+  <section class="home-section">
+    <div class="section-header">
+      <h2 class="section-title">Things Built & Explored</h2>
+      <a href="/things" class="section-link font-mono">all things ({allThings.length}) ↗</a>
+    </div>
+    <div class="things-list">
+      {
+        featuredThings.map((thing) => (
+          <ThingCard
+            title={thing.data.title}
+            description={thing.data.description}
+            year={thing.data.year}
+            status={thing.data.status}
+            statusLabel={thing.data.statusLabel}
+            tags={thing.data.tags}
+            repo={thing.data.repo}
+            url={thing.data.url}
+          />
+        ))
+      }
+    </div>
+  </section>
+  -->
+
+  <!-- Closing / Contact Hint -->
+  <section class="connect-prompt">
+    <p class="text-muted">
+      Want to talk shop, collaborate, or nerd out about infra?
+    </p>
+    <a href="/contact" class="connect-btn font-mono">
+      get in touch <span>→</span>
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .intro-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 680px) 300px;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .intro-content {
+    max-width: 680px;
+  }
+
+  .intro-media {
+    position: sticky;
+    top: calc(var(--space-12) + 50px);
+    padding-left: 24px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .intro-avatar {
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 28px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  :global([data-theme="dark"]) .intro-avatar {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
+  }
+
+  .home-section,
+  :global(.now-snapshot),
+  .connect-prompt {
+    max-width: 680px;
+  }
+
+  @media (max-width: 960px) {
+    .intro-layout {
+      display: block;
+    }
+
+    .intro-media {
+      display: none;
+    }
+  }
+
+  .intro-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    margin-bottom: var(--space-3);
+  }
+
+  .intro-lead {
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+    color: var(--text);
+    margin-bottom: var(--space-3);
+  }
+
+  .intro-body {
+    margin-top: var(--space-4);
+  }
+
+  .intro-text {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-4);
+  }
+
+  .intro-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .intro-text code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background-color: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--code-border);
+  }
+
+  .intro-text strong {
+    color: var(--text);
+  }
+
+  .home-section {
+    margin: var(--space-12) 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-6);
+  }
+
+  .section-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .section-link {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .section-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .connect-prompt {
+    margin-top: var(--space-12);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .connect-prompt p {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .connect-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-sm);
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: gap var(--transition-fast);
+  }
+
+  .connect-btn:hover {
+    gap: 10px;
+    text-decoration: underline;
+  }
+</style>
