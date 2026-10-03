@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SchemaOrg from '../components/SchemaOrg.astro';
 import { siteConfig } from '../data/siteConfig';
 import '../styles/global.css';
 import '../styles/code.css';
@@ -10,7 +11,10 @@ interface Props {
   description?: string;
   ogImage?: string;
   articleDate?: string;
+  articleUpdatedDate?: string;
+  tags?: string[];
   wide?: boolean;
+  schemaType?: 'website' | 'profile' | 'article';
 }
 
 const {
@@ -18,12 +22,27 @@ const {
   description = siteConfig.description,
   ogImage = '/og-default.png',
   articleDate,
+  articleUpdatedDate,
+  tags = [],
   wide = false,
+  schemaType,
 } = Astro.props;
 
 const siteUrl = siteConfig.siteUrl;
-const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
-const fullTitle = title === siteConfig.title ? title : `${title} — ${siteConfig.siteName}`;
+const cleanPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonicalUrl = new URL(cleanPath === '/' ? '/' : cleanPath, siteUrl).toString();
+
+const fullTitle =
+  title === siteConfig.title
+    ? title
+    : title.includes(siteConfig.author.name)
+      ? title
+      : `${title} — ${siteConfig.author.name}`;
+
+const resolvedOgImage = new URL(ogImage, siteUrl).toString();
+
+const resolvedSchemaType =
+  schemaType || (articleDate ? 'article' : cleanPath === '/' ? 'profile' : 'website');
 ---
 
 <!doctype html>
@@ -40,6 +59,10 @@ const fullTitle = title === siteConfig.title ? title : `${title} — ${siteConfi
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={siteConfig.author.name} />
+    <meta
+      name="keywords"
+      content="Abhijeet Gaur, Software Engineer, Backend Engineer, DevOps, Cloud Infrastructure, Gaurbage"
+    />
 
     <!-- OpenGraph / Social -->
     <meta property="og:type" content={articleDate ? 'article' : 'website'} />
@@ -47,13 +70,31 @@ const fullTitle = title === siteConfig.title ? title : `${title} — ${siteConfi
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content={siteConfig.siteName} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteConfig.author.name} — ${siteConfig.author.role}`} />
     {articleDate && <meta property="article:published_time" content={articleDate} />}
+    {articleUpdatedDate && <meta property="article:modified_time" content={articleUpdatedDate} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content={siteConfig.author.twitterHandle} />
+    <meta name="twitter:creator" content={siteConfig.author.twitterHandle} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+
+    <!-- Schema.org Structured Data (JSON-LD) -->
+    <SchemaOrg
+      type={resolvedSchemaType}
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      datePublished={articleDate}
+      dateModified={articleUpdatedDate}
+      tags={tags}
+    />
 
     <!-- Theme Initialization Script (Zero FOUC) -->
     <script is:inline>

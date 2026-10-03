@@ -42,6 +42,9 @@ const formattedUpdated = updatedAt
   title={title}
   description={description}
   articleDate={publishedAt.toISOString()}
+  articleUpdatedDate={updatedAt ? updatedAt.toISOString() : undefined}
+  tags={tags}
+  schemaType="article"
 >
   <div class="note-container">
     <nav class="back-nav">

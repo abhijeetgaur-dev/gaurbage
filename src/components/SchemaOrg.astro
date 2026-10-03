@@ -1,0 +1,109 @@
+---
+import { siteConfig } from '../data/siteConfig';
+
+interface Props {
+  type?: 'website' | 'profile' | 'article';
+  title?: string;
+  description?: string;
+  canonicalUrl: string;
+  datePublished?: string;
+  dateModified?: string;
+  tags?: string[];
+}
+
+const {
+  type = 'website',
+  title = siteConfig.title,
+  description = siteConfig.description,
+  canonicalUrl,
+  datePublished,
+  dateModified,
+  tags = [],
+} = Astro.props;
+
+const personSchema: Record<string, any> = {
+  '@type': 'Person',
+  '@id': `${siteConfig.siteUrl}/#person`,
+  name: siteConfig.author.name,
+  alternateName: ['gaurbage', 'gaurabhijeet', 'abhijeetgaurdev'],
+  url: siteConfig.siteUrl,
+  image: `${siteConfig.siteUrl}/abhijeet-gaur.jpg`,
+  jobTitle: siteConfig.author.role || 'Software Development Engineer',
+  description: siteConfig.description,
+  email: `mailto:${siteConfig.author.email}`,
+  worksFor: {
+    '@type': 'Organization',
+    name: '4way Technologies',
+    url: 'https://4waytechnologies.com/',
+  },
+  sameAs: siteConfig.socials.map((s) => s.url),
+  knowsAbout: [
+    'Software Engineering',
+    'Backend Development',
+    'DevOps',
+    'Cloud Infrastructure',
+    'Node.js',
+    'TypeScript',
+    'CI/CD Pipelines',
+    'Distributed Systems',
+  ],
+};
+
+const websiteSchema: Record<string, any> = {
+  '@type': 'WebSite',
+  '@id': `${siteConfig.siteUrl}/#website`,
+  url: siteConfig.siteUrl,
+  name: `${siteConfig.author.name} — Personal Website`,
+  alternateName: siteConfig.siteName,
+  description: siteConfig.description,
+  publisher: {
+    '@id': `${siteConfig.siteUrl}/#person`,
+  },
+  inLanguage: 'en-US',
+};
+
+const graph: Record<string, any>[] = [personSchema, websiteSchema];
+
+if (type === 'profile') {
+  graph.push({
+    '@type': 'ProfilePage',
+    '@id': `${canonicalUrl}#profilepage`,
+    url: canonicalUrl,
+    name: `${siteConfig.author.name} — Profile`,
+    isPartOf: {
+      '@id': `${siteConfig.siteUrl}/#website`,
+    },
+    mainEntity: {
+      '@id': `${siteConfig.siteUrl}/#person`,
+    },
+  });
+} else if (type === 'article' && datePublished) {
+  graph.push({
+    '@type': 'TechArticle',
+    '@id': `${canonicalUrl}#article`,
+    url: canonicalUrl,
+    headline: title,
+    description: description,
+    datePublished: datePublished,
+    dateModified: dateModified || datePublished,
+    inLanguage: 'en-US',
+    isPartOf: {
+      '@id': `${siteConfig.siteUrl}/#website`,
+    },
+    author: {
+      '@id': `${siteConfig.siteUrl}/#person`,
+    },
+    publisher: {
+      '@id': `${siteConfig.siteUrl}/#person`,
+    },
+    keywords: tags.join(', '),
+  });
+}
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': graph,
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />
