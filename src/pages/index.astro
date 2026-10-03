@@ -21,7 +21,7 @@ const featuredThings = allThings
   .slice(0, 3);
 ---
 
-<BaseLayout wide={true}>
+<BaseLayout wide={true} schemaType="profile">
   <!-- Introduction & About -->
   <section class="intro-section">
     <div class="intro-layout">
@@ -62,11 +62,12 @@ const featuredThings = allThings
       <div class="intro-media">
         <img
           src={author.avatar || '/avatar.jpg'}
-          alt={author.name}
+          alt={`${author.name} — ${author.role}`}
           class="intro-avatar"
           width="280"
           height="350"
           loading="eager"
+          fetchpriority="high"
           onerror="this.onerror=null;this.src='/avatar.svg';"
         />
       </div>

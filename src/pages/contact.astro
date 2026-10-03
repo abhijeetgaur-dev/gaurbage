@@ -7,7 +7,7 @@ const email = author.email;
 ---
 
 <PageLayout
-  title="Contact"
+  title={`Contact ${author.name}`}
   description={`Get in touch with ${author.name} for conversations on backend systems, infrastructure, collaboration, or engineering.`}
 >
   <div class="prose contact-prose">
@@ -50,7 +50,7 @@ const email = author.email;
               <a
                 href={social.url}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="me noopener noreferrer"
                 class="contact-title font-mono"
               >
                 {social.name}

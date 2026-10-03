@@ -43,12 +43,12 @@ export interface SiteConfig {
 export const siteConfig: SiteConfig = {
   siteUrl: 'https://gaurbage.com',
   siteName: 'Gaurbage',
-  title: 'Gaurbage — Abhijeet Gaur',
+  title: 'Abhijeet Gaur — Software Engineer | Gaurbage',
   description:
-    'Abhijeet Gaur. Backend-first engineer, into DevOps, infra, and optimizing whatever code comes my way.',
+    'Abhijeet Gaur is a Software Development Engineer specializing in backend systems, DevOps, and cloud infrastructure. Personal website, technical notes, and projects.',
   author: {
     name: 'Abhijeet Gaur',
-    role: 'Software Engineer',
+    role: 'Software Development Engineer',
     lead:
       'Software engineer · Backend · DevOps · Infra',
     bio: [
